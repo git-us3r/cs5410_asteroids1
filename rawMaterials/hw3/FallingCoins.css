@@ -1,0 +1,85 @@
+﻿body {
+
+    background-color : lightslategrey;
+}
+
+#canvas-main {
+
+	position: absolute;
+	left: 0;
+	top: 0;
+    background-image : url('Assign3_Images/Background.png');
+    border-style: solid;
+    border-width: 2px;
+}
+
+#html_level {
+
+	display : none;
+}
+
+#html_levelScore {
+
+	display : none;
+}
+
+#html_totalScore {
+
+	display : none;
+}
+
+#html_highScores {
+
+	display:  none;
+}
+
+
+#startGameButton{
+
+	position: absolute;
+	left: 2px;
+	top: 604px;
+	width: 200px;
+	height: 70px;
+
+	font-size: x-large;
+
+
+}
+
+#highScoresButton{
+
+	position: absolute;
+	left: 202px;
+	top: 604px;
+	width: 200px;
+	height: 70px;
+
+	font-size: x-large;
+}
+
+#creditsButton {
+
+	position: absolute;
+	left: 402px;
+	top: 604px;
+	width: 200px;
+	height: 70px;
+
+	font-size: x-large;
+}	
+
+
+#particles {
+
+	position: absolute;
+	left: 650px;
+	top: 200px;
+	width: 200px;
+	height: 70px;
+
+	border-style: solid;
+	border-width: 4px;
+
+	font-size: x-large;
+}
