@@ -8,6 +8,11 @@
 MYGAME.input = (function() {
 	'use strict';
 	
+
+	//
+	// This is the keyboard object. It stores input in member
+	// keys.
+	//
 	function Keyboard() {
 		var that = {
 				keys : {},
@@ -15,26 +20,51 @@ MYGAME.input = (function() {
 			},
 			key;
 		
+
+		//
+		// Stores key/value pairs (keyCode, timeStamp)
+		//
 		function keyPress(e) {
 			that.keys[e.keyCode] = e.timeStamp;
 		}
 		
+
+		//
+		// Removes the key/value pair.
+		//
 		function keyRelease(e) {
 			delete that.keys[e.keyCode];
 		}
+
 		
 		// ------------------------------------------------------------------
 		//
-		// Allows the client code to register a keyboard handler
+		// Allows the client code to register a keyboard handler:
+		// Adds and entry to the handlers member (which is an array).
+		// The entry is an object (or a key/handler pair).
+		// 
+		// Invocation example:
+		// myKeyboard.registerCommand(KeyEvent.DOM_VK_A, myTexture.moveLeft);
 		//
+		// The actual parameters consist of a key code (defined below) and
+		// a function (a member of that), which is associated with that key.
+ 		//
 		// ------------------------------------------------------------------
 		that.registerCommand = function(key, handler) {
 			that.handlers.push({ key : key, handler : handler});
 		};
+
+
 		
 		// ------------------------------------------------------------------
 		//
 		// Allows the client to invoke all the handlers for the registered key/handlers.
+		//
+		// Here is where the functions associated with each handler are invoked.
+		// It iterates over all key/handler pairs in member handlers, and for each
+		// key, the corresponding handler function (registered using registerCommand)
+		// is invoked, with elapsedTime as paramter - this is because the motion functions
+		// depend on elapsedTime to compute the new position.
 		//
 		// ------------------------------------------------------------------
 		that.update = function(elapsedTime) {
@@ -45,8 +75,15 @@ MYGAME.input = (function() {
 			}
 		};
 		
+
+
 		//
 		// These are used to keep track of which keys are currently pressed
+		//
+		// The only key events considered here are pressed and released.
+		// Hence, the assumption is that movement begins when the key is pressed,
+		// and it is continued for as long as the key is pressed down (i.e., keyRelease marks the end of motion).
+		//
 		window.addEventListener('keydown', keyPress.bind(that));
 		window.addEventListener('keyup', keyRelease.bind(that));
 		
