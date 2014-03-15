@@ -11,11 +11,35 @@
 
 			var kb = Keyboard(window);
 
-			kb.registerKey(KeyEvent.DOM_VK_A, function(){
+			kb.registerKey(KeyEvent.DOM_VK_E, function(){
 
-				console.log("Key: " + KeyEvent.DOM_VK_A + " pressed at: " + performance.now())
+				console.log("^ @ " + performance.now())
 
 			});
+
+
+			kb.registerKey(KeyEvent.DOM_VK_D, function(){
+
+				console.log("v @ " + performance.now())
+
+			});
+
+
+
+			kb.registerKey(KeyEvent.DOM_VK_F, function(){
+
+				console.log("> @ " + performance.now())
+
+			});
+
+
+			kb.registerKey(KeyEvent.DOM_VK_S, function(){
+
+				console.log("< @ " + performance.now())
+
+			});
+
+
 
 			var elapsedTime = 0;
 			var lastTimeStamp = performance.now();
