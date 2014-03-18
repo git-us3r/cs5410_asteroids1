@@ -124,7 +124,7 @@ if (typeof KeyEvent === 'undefined') {
 
 
 // A keyboard object.
-var Keyboard = function(_window){
+var Keyboard = function(){
 	
 	
 	var that = {};			// The return object.
@@ -213,8 +213,8 @@ var Keyboard = function(_window){
 	//
 	// Bind key events with member functions.
 	/////
-	_window.addEventListener('keydown', that.keyPressed);
-	_window.addEventListener('keyup', that.keyReleased);
+	window.addEventListener('keydown', that.keyPressed);
+	window.addEventListener('keyup', that.keyReleased);
 
 
 
