@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Web Service REST API Demonstration</title>
+	<link rel="stylesheet" href="/stylesheets/style.css">
+	<script type="text/javascript" src = "http://code.jquery.com/jquery-latest.min.js"></script>
+	<script type="text/javascript" src = "scripts/index.js"></script>
+</head>
+<body>
+	<h1>Web Service API Demonstration</h1>
+	<p>Welcome to High-Score API Client</p>
+	<br>
+	<input id="id-playerName" type="text" placeholder="player name">
+	<input id="id-playerScore" type="text" placeholder="game score">
+	<button onclick="addScore();">Submit</button>
+	<br>
+	<button onclick="showScores();">Show Scores</button>
+	<div id="id-scores-server">
+		<ol id="id-high-scores">
+		</ol>
+	</div>
+</body>
+</html>
