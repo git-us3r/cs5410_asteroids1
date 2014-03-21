@@ -2,8 +2,7 @@
 
 function Ship(){
 	
-	var that = {},
-		vlib = Vector2d();
+	var that = {};
 
 
 	that.image = null;
@@ -41,7 +40,7 @@ function Ship(){
 
 		// that.directionVector.x = Math.cos(that.rotate());
 		//that.directionVector.y = Math.sin(that.rotate());
-		that.directionVector = vlib.vectorFromAngle(that.truRotation());
+		that.directionVector = Vector2d.vectorFromAngle(that.truRotation());
 
 	};
 
@@ -62,7 +61,7 @@ function Ship(){
 		}
 		*/
 
-		that.thrustVector = vlib.scale( Math.abs(that.thrustRate), that.directionVector);
+		that.thrustVector = Vector2d.scale( Math.abs(that.thrustRate), that.directionVector);
 
 	};
 
@@ -75,7 +74,7 @@ function Ship(){
 
 		// that.accelerationVector.x = that.inertiaVector.x + that.thrustVector.x;
 		// that.accelerationVector.y = that.inertiaVector.y + that.thrustVector.y;
-		that.accelerationVector = vlib.add(that.inertiaVector, that.thrustVector);
+		that.accelerationVector = Vector2d.add(that.inertiaVector, that.thrustVector);
 	};
 
 
@@ -85,10 +84,10 @@ function Ship(){
 		//var dx = timeElapsed * that.accelerationVector.x,
 		//	dy = timeElapsed * that.accelerationVector.y;
 
-		var changeInMotion = vlib.scale(timeElapsed, that.accelerationVector);
+		var changeInMotion = Vector2d.scale(timeElapsed, that.accelerationVector);
 
 		//that.motionMagnitude = Math.sqrt(Math.pow(dx,2 ) + Math.pow(dy, 2));
-		that.motionMagnitude = vlib.magnitude(changeInMotion);
+		that.motionMagnitude = Vector2d.magnitude(changeInMotion);
 
 
 
@@ -113,7 +112,7 @@ function Ship(){
 		*/
 		if (that.motionMagnitude !== 0)
 		{
-			that.center = vlib.add(that.center, changeInMotion);
+			that.center = Vector2d.add(that.center, changeInMotion);
 		}
 
 
@@ -178,7 +177,7 @@ function Ship(){
 
 			if(that.thrustRate < that.maxThrustRate){
 
-				that.thrustRate += 1 / (Math.max(that.thrustRate, 10));
+				that.thrustRate += 1 / (Math.max(that.thrustRate, 2));
 			}
 
 		}else {

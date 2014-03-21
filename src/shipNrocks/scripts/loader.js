@@ -20,6 +20,7 @@ window.addEventListener('load', function() {
 		{
 			load : [
 				'preload!scripts/vector2d.js',
+				'preload!scripts/random.js',
 				'preload!scripts/ship_v.js',
 				'preload!scripts/asteroid_v.js',
 				'preload!scripts/keyboard.js',

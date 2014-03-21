@@ -1,8 +1,7 @@
 // A simple asteroid.
 function Asteroid(){
 
-var that = {},
-	vlib = Vector2d();
+	var that = {};
 
 	that.image = null;
 	that.width = 50;
@@ -63,7 +62,7 @@ var that = {},
 		// that.center.x = (that.center.x + (elapsedTime * that.speed * that.direction.x)) % (canvasDim.x + that.width);	// modular so it wraps
 		// that.center.y = (that.center.y + (elapsedTime * that.speed * that.direction.y)) % (canvasDim.y + that.height);
 
-		that.center = vlib.add(that.center, vlib.scale((elapsedTime * that.speed), that.direction));
+		that.center = Vector2d.add(that.center, Vector2d.scale((elapsedTime * that.speed), that.direction));
 		adjustBounds(canvasDim);
 
 	};

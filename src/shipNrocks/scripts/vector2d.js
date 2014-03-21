@@ -5,7 +5,7 @@
 // 
 // A vector is any object with the following interface: {x: number, y: number}
 
-function Vector2d(){
+var Vector2d = (function(){
 	
 	var that = {};
 
@@ -146,4 +146,4 @@ function Vector2d(){
 
 	return that;
 
-}
+}());

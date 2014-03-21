@@ -51,35 +51,56 @@ GAME.initialize = function(){
 	GAME.velements['ship'] = ship;
 
 
-	
-	// A singel asteroids .. quickly
-	var ast = Asteroid();
-	ast.image = GAME.images['images/asteroid1.jpg'];
-	ast.width = 50;
-	ast.height = 50;
-	ast.rotation = 0;
-	ast.center = {x: 100, y: 100};
-	ast.speed = 10;
-	
-	ast.visible = true;
-	ast.renderable = true;
+	// Only 10 for now ... args can be used to changed that.
+	GAME.initializeAsteroids = (function(arg){
 
-	GAME.velements['asteroid'] = ast;
+		GAME.velements['asteroids'] = [];
+
+		for (var i = 0; i < 7; i++){
+
+
+			// A singel asteroids .. quickly
+			var ast = Asteroid();
+			ast.image = GAME.images['images/asteroid1.jpg'];
+			ast.width = 50;
+			ast.height = 50;
+			ast.rotation = 0;
+
+			// randomize location
+			ast.center = {
+				x: Random.nextRange(ast.width, GAME.canvas.width - ast.width), 
+				y: Random.nextRange(ast.height, GAME.canvas.height - ast.height)
+			};
+			
+			// randomize speed
+			ast.speed = Random.nextGaussian(50, 20);
+
+			// randomize direction
+			ast.direction = Vector2d.vectorFromAngle(Random.nextGaussian(Math.PI, Math.PI));
+			
+			ast.visible = true;
+			ast.renderable = true;
+
+			GAME.velements['asteroids'].push(ast);
+		}
+	}());
 
 
 
 	
 	GAME.update = function(elapsedTime, canvasDim){
 
+		GAME.velements['keyboard'].update(elapsedTime, canvasDim);
+		GAME.velements['ship'].update(elapsedTime, canvasDim);
 		
-		// Cite: https://stackoverflow.com/questions/587881/iterating-over-every-property-of-an-object-in-javascript-using-prototype
-		for(var velement in GAME.velements) {
+		for(var i = 0; i < GAME.velements['asteroids'].length; i++){
 
-		    if(GAME.velements.hasOwnProperty(velement)) {
+			if ( GAME.velements['asteroids'][i].visible) {
 
-		    	GAME.velements[velement].update(elapsedTime, canvasDim);
-		    }
+				GAME.velements['asteroids'][i].update(elapsedTime, canvasDim);				
+			}
 		}
+
 	};
 
 
@@ -87,17 +108,14 @@ GAME.initialize = function(){
 
 	GAME.render = function(ctx){
 
-		// Cite: https://stackoverflow.com/questions/587881/iterating-over-every-property-of-an-object-in-javascript-using-prototype
-		for(var velement in GAME.velements) {
+		GAME.velements['ship'].render(ctx);
 
-		    if(GAME.velements.hasOwnProperty(velement)) {
+		for(var i = 0; i < GAME.velements['asteroids'].length; i++){
 
-		    	// if object is renderable
-		    	if (GAME.velements[velement].renderable) {
+			if ( GAME.velements['asteroids'][i].visible) {
 
-					GAME.velements[velement].render(ctx);
-		    	}
-		    }
+				GAME.velements['asteroids'][i].render(ctx);				
+			}
 		}
 
 	};
