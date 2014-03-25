@@ -177,11 +177,10 @@ function Ship(){
 
 			if(that.thrustRate < that.maxThrustRate){
 
-				that.thrustRate += 1 / (Math.max(that.thrustRate, 2));
+				that.thrustRate += 1 / (Math.max(that.thrustRate, 2));	// magic.
 			}
 
 		}else {
-
 			that.thrustRate = 0;
 		}
 	};

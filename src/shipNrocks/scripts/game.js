@@ -87,6 +87,18 @@ GAME.initialize = function(){
 
 
 
+	GAME.velements['explosions'] = [];		// An array of explosions
+
+
+
+
+	GAME.collisionDetection = function(){
+
+		// 
+	};
+
+
+
 	
 	GAME.update = function(elapsedTime, canvasDim){
 
@@ -98,6 +110,18 @@ GAME.initialize = function(){
 			if ( GAME.velements['asteroids'][i].visible) {
 
 				GAME.velements['asteroids'][i].update(elapsedTime, canvasDim);				
+			}
+		}
+
+		GAME.collisionDetection();		// Modifies the state of elements.
+
+		// Here because they could be set inside collisionDetection
+		for(var i = 0; i < GAME.velements['explosions'].length; i++){
+
+			// an explosion should have a visible property (which is true as long as at least one of the particles is visible).
+			if ( GAME.velements['explosions'][i].visible) {
+
+				GAME.velements['explosions'][i].update(elapsedTime, canvasDim);				
 			}
 		}
 
