@@ -27,7 +27,7 @@ function Ship(){
 	that.directionVector = {x: 0, y: 0};					// Points in the nose direction (unit vector)
 	that.thrustVector = {x: 0, y: 0};						// Also
 	that.accelerationVector = {x: 0, y: 0};
-	that.rotateRate = 3;
+	that.rotateRate = 4;
 	that.thrustRate = 0;						// set in client
 	that.maxThrustRate = 8;
 	//	that.inMotion = false;					// irrelevant given motionMagnitude
@@ -177,11 +177,12 @@ function Ship(){
 
 			if(that.thrustRate < that.maxThrustRate){
 
-				that.thrustRate += 1 / (Math.max(that.thrustRate, 2));	// magic.
+				that.thrustRate += 1 / (Math.max(that.thrustRate, .2));	// magic.
 			}
 
 		}else {
 			that.thrustRate = 0;
+			// friction ?? 
 		}
 	};
 

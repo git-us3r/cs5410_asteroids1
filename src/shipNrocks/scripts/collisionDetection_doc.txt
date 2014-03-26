@@ -90,5 +90,12 @@ ALGORITHM: destroy(element)
 
 
 
-mmhh...
+mmhh... Pattern?
+
+The collision detector should be abstracted away from the colliding elements.
+The collisions are represented by vectors. So, detection can be implemented by the GAME
+using the a function of the vector library.
+
+Then collsision detection boils down to a function call. However there must be an entity which manages the items compared and notifies abt it.
+The collision detection agent receives an 
 

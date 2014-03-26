@@ -119,7 +119,7 @@ var Vector2d = (function(){
 
 		};
 
-		// beleive
+		// believe
 		if ( that.dotProduct(v, tempV) === 0) {
 
 			return that.getDirection(tempV);
@@ -127,6 +127,24 @@ var Vector2d = (function(){
 		else return null;
 	};
 
+	
+	
+	// Returns the distance distance between v1 and v2 (the magnitude of the difference).
+	that.distance = function(v1, v2){
+	
+		//return Math.sqrt( Math.pow((v2.x - v1.x) , 2) + Math.pow((v2.y - v1.y), 2));
+		return that.magnitude(that.subtract(v1, v2));
+	};
+	
+	
+	// Returns a vector which is midway between v1 and v2 (on a straight line path).
+	that.midPoint = function (v1, v2){
+		
+		var temp = that.add(v1, v2);
+		return that.scale(.5, temp);
+		
+	};
+	
 
 
 

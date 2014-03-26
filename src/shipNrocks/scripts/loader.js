@@ -26,6 +26,7 @@ window.addEventListener('load', function() {
 				'preload!scripts/keyboard.js',
 				'preload!images/ship.jpg',
 				'preload!images/asteroid1.jpg',
+				'preload!scripts/CollisionDetector.js',
 				'preload!scripts/game.js'
 			],
 			complete : function() {

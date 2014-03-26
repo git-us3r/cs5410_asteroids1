@@ -48,7 +48,7 @@ GAME.initialize = function(){
 	ship.visible = true;
 	ship.renderable = true;
 
-	GAME.velements['ship'] = ship;
+	GAME.velements['ship'] = [ship];		// an array of one to maintain a consistent interface. (see CollisionDetector)
 
 
 	// Only 10 for now ... args can be used to changed that.
@@ -87,23 +87,30 @@ GAME.initialize = function(){
 
 
 
+
+	// COLLISIONS N EXPLOSIONS
 	GAME.velements['explosions'] = [];		// An array of explosions
-
-
 
 
 	GAME.collisionDetection = function(){
 
-		// 
-	};
+		// Collision handling function
+		function collisionStrategy(ntt1, ntt2){
 
+			var mp = Vector2d.midPoint(ntt1.center, ntt2.center);
+			console.log("collision at " + "< " + mp.x + ", " + mp.y + " >");
+		}
+
+
+		CollisionDetector.detectCollisions(GAME.velements['ship'], GAME.velements['asteroids'], collisionStrategy);
+	};
 
 
 	
 	GAME.update = function(elapsedTime, canvasDim){
 
 		GAME.velements['keyboard'].update(elapsedTime, canvasDim);
-		GAME.velements['ship'].update(elapsedTime, canvasDim);
+		GAME.velements['ship'][0].update(elapsedTime, canvasDim);		// mmhh .. the pits of patching
 		
 		for(var i = 0; i < GAME.velements['asteroids'].length; i++){
 
@@ -130,9 +137,13 @@ GAME.initialize = function(){
 
 
 
+
+
+
+
 	GAME.render = function(ctx){
 
-		GAME.velements['ship'].render(ctx);
+		GAME.velements['ship'][0].render(ctx);			// hack hack!
 
 		for(var i = 0; i < GAME.velements['asteroids'].length; i++){
 
@@ -146,9 +157,9 @@ GAME.initialize = function(){
 
 
 	// There needs to be a function to do this with client requests.
-	GAME.velements['keyboard'].registerKey(KeyEvent.DOM_VK_E, GAME.velements['ship'].thrustAction);
-	GAME.velements['keyboard'].registerKey(KeyEvent.DOM_VK_S, GAME.velements['ship'].rotateLeft);
-	GAME.velements['keyboard'].registerKey(KeyEvent.DOM_VK_F, GAME.velements['ship'].rotateRight);
+	GAME.velements['keyboard'].registerKey(KeyEvent.DOM_VK_E, GAME.velements['ship'][0].thrustAction);
+	GAME.velements['keyboard'].registerKey(KeyEvent.DOM_VK_S, GAME.velements['ship'][0].rotateLeft);
+	GAME.velements['keyboard'].registerKey(KeyEvent.DOM_VK_F, GAME.velements['ship'][0].rotateRight);
 
 
 
