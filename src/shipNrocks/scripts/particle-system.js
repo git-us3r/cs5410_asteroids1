@@ -1,5 +1,22 @@
 /*jslint browser: true, white: true, plusplus: true */
 /*global Random */
+//////
+// INTERFACE
+//
+// spec exposes the following properties:
+//	image
+//	center
+//	speed_mean
+//	speed_std
+// 	lifetime_mean
+//	lifetime_std
+
+// graphics exposes the method drawImage(spec)
+//
+///////////
+
+
+
 function particleSystem(spec, graphics) {
 	//'use strict';
 	var that = {},
@@ -17,9 +34,9 @@ function particleSystem(spec, graphics) {
 				size: Random.nextGaussian(10, 4),
 				center: {x: spec.center.x, y: spec.center.y},
 				direction: Random.nextCircleVector(),
-				speed: Random.nextGaussian(spec.speed.mean, spec.speed.stdev), // pixels per second
+				speed: Random.nextGaussian(spec.speed_mean, spec.speed_std), // pixels per second
 				rotation: 0,
-				lifetime: Random.nextGaussian(spec.lifetime.mean, spec.lifetime.stdev),	// How long the particle should live, in seconds
+				lifetime: Random.nextGaussian(spec.lifetime_mean, spec.lifetime_stdev),	// How long the particle should live, in seconds
 				alive: 0	// How long the particle has been alive, in seconds
 			};
 		
