@@ -12,7 +12,22 @@ var Explosion = (function(){
 	var that = {},
 		systemGen = {};
 
-	// TODO... parameters to determine the duration, expansion, intensity, and images of the explosion.
+
+	// Clien Interface: spec.center represents the center of the explosion to be used.
+	that.spec = function (_image, _width, _height, expCenter, _speed_mean, _speed_std, _lifetime_mean, _lifetime_std, _lifetime){
+
+		image : _image,
+		width : _width,
+		height : _height,
+		center : expCenter,
+		speed_std : _speed_std,
+		speed_mean : _speed_mean,
+		lifetime : _lifetime,
+		lifetime_mean : _lifetime_mean,
+		lifetime_std : _lifetime_std
+	};	
+
+	// Client interface: Depends on that.spec
 	that.explosionParameters = function (_specs, _graphics){
 
 		specs : _specs || [],
@@ -20,21 +35,8 @@ var Explosion = (function(){
 	};
 
 
-	that.spec = function (_image, _width, _height, _center, _speed_mean, _speed_std, _lifetime_mean, _lifetime_std, _lifetime){
 
-		image : _image,
-		width : _width,
-		height : _height,
-		center : _center,
-		speed_std : _speed_std,
-		speed_mean : _speed_mean,
-		lifetime : _lifetime,
-		lifetime_mean : _lifetime_mean,
-		lifetime_std : _lifetime_std
-	};
-
-
-
+	// Client Interface: depends on that.explosionParamters and particle-system.js
 	that.setExplosion = function(explosionParameters){
 
 		// TODO
