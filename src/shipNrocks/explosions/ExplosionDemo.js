@@ -99,9 +99,7 @@ EXP.initializeExplosion = function(arg){
 		20, 
 		8, 
 		4, 
-		1, 
-		0,
-		5
+		1
 	);
 
 
