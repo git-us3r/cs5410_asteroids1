@@ -1,6 +1,4 @@
-//ExplosionLoader.js
-
-var EXP = {
+var EXPD = {
 	images : {},
 
 	status : {
@@ -21,13 +19,20 @@ window.addEventListener('load', function() {
 	Modernizr.load([
 		{
 			load : [
-				'preload!scripts/vector2d.js',
+				'preload!scripts/Vector2d.js',
 				'preload!scripts/random.js',
+				'preload!scripts/ship_v.js',
+				'preload!scripts/asteroid_v.js',
 				'preload!scripts/keyboard.js',
+				'preload!images/ship.jpg',
+				'preload!images/asteroid1.jpg',
 				'preload!images/fire.png',
 				'preload!images/smoke.png',
+				'preload!scripts/particle-system-exp.js',
 				'preload!scripts/CollisionDetector.js',
-				'preload!scripts/game.js'
+				'preload!scripts/Explosion.js',
+				'preload!scripts/ExplosionFactory.js',
+				'preload!scripts/CollisionDemo.js'
 			],
 			complete : function() {
 				console.log('All files requested for loading...');
@@ -44,24 +49,24 @@ window.addEventListener('load', function() {
 yepnope.addPrefix('preload', function(resource) {
 	console.log('preloading: ' + resource.url);
 	
-	GAME.status.preloadRequest += 1;
+	EXPD.status.preloadRequest += 1;
 	var isImage = /.+\.(jpg|png|gif)$/i.test(resource.url);
 	resource.noexec = isImage;
 	resource.autoCallback = function(e) {
 		if (isImage) {
 			var image = new Image();
 			image.src = resource.url;
-			GAME.images[resource.url] = image;
+			EXPD.images[resource.url] = image;
 		}
 		
-		GAME.status.preloadComplete += 1;
-		//console.log(GAME.status);
+		EXPD.status.preloadComplete += 1;
+		//console.log(EXPD.status);
 		
 		//
-		// When everything has finished preloading, go ahead and start the game
-		if (GAME.status.preloadComplete === GAME.status.preloadRequest) {
+		// When everything has finished preloading, go ahead and start the EXPD
+		if (EXPD.status.preloadComplete === EXPD.status.preloadRequest) {
 			console.log('Preloading complete!');
-			GAME.initialize();
+			EXPD.initialize();
 		}
 	};
 	
