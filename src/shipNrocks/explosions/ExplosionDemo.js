@@ -11,7 +11,7 @@ EXP.EXPLoop = function(time){
 	// EXP.updateShip(EXP.elapsedTime / 1000, {x: EXP.canvas.width, y: EXP.canvas.height}); // elapsedTime is now in seconds.
 
 	EXP.clear();
-	EXP.render(EXP.context);
+	EXP.render();
 
 	requestAnimationFrame(EXP.EXPLoop);
 
@@ -82,7 +82,28 @@ EXP.initialize = function(){
 };
 
 
+EXP.initializeExplosion = function(arg){
 
+	// say, base
+	var imgs = ImageSet(
+
+		EXP.images['img_exp/fire.png'],
+		EXP.images['img_exp/smoke.png'],
+		null,
+		null,
+		null,
+		null,
+		null
+	)
+
+	var exp = ExplosionFactory(ExplosionType.baseExplosion, imgs, EXP.graphics, 4, {x:100, y:100});
+	EXP.velements['explosions'].push(exp);
+	
+	// function(_ExplosionType, _ImageSet, _graphics, _duration, _center)
+
+};
+
+/*
 EXP.initializeExplosion = function(arg){
 
 	// Later ... explosion can be determined by arg (factory)	
@@ -130,6 +151,7 @@ EXP.initializeExplosion = function(arg){
 	EXP.velements['explosions'].push(exp);	
 		
 };
+*/
 
 
 
@@ -153,7 +175,7 @@ EXP.update = function(elapsedTime, canvasDim){
 
 
 
-EXP.render = function(ctx){
+EXP.render = function(){
 
 	for(var i = 0; i < EXP.velements['explosions'].length; i++){
 

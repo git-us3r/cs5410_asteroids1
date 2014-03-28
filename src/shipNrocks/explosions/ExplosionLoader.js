@@ -23,6 +23,7 @@ window.addEventListener('load', function() {
 			load : [
 				'preload!particle-system-exp.js',
 				'preload!Explosion.js',
+				'preload!ExplosionFactory.js',
 				'preload!vector2d.js',
 				'preload!random.js',
 				'preload!keyboard.js',

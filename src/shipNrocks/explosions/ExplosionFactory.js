@@ -9,16 +9,19 @@
 
 
 // kind of an enum
-var ImageType = function(){
+var ImageType = (function(){
 
-	fire : 'FIRE',
-	smoke : 'SMOKE',
-	plasma : 'PLASMA',
-	debryBase : 'DEBRY_BASE',
-	debryMissiles : 'DEBRY_MISSILES',
-	debryEnemyShip : 'DEBRY_ENEMY_SHIP',
-	debryShip : 'DEBRY_SHIP'
-};
+	return {
+		fire : 'FIRE',
+		smoke : 'SMOKE',
+		plasma : 'PLASMA',
+		debryBase : 'DEBRY_BASE',
+		debryMissiles : 'DEBRY_MISSILES',
+		debryEnemyShip : 'DEBRY_ENEMY_SHIP',
+		debryShip : 'DEBRY_SHIP'
+	};
+
+}());
 
 
 
@@ -27,6 +30,10 @@ var ImageFactory = function(_ImageType, _image, _center){
 
 
 	////////////////////////// TEMPLATES ////////////////////
+
+	// Add a new parameter to determine how many particles should
+	// be regenerated during update.
+
 	function fire(_image, _center){
 
 		return {
@@ -38,6 +45,7 @@ var ImageFactory = function(_ImageType, _image, _center){
 			speed_mean : 8,
 			lifetime_mean : 4,
 			lifetime_std : 1,
+			genRate : 2
 		};
 	}
 
@@ -54,6 +62,7 @@ var ImageFactory = function(_ImageType, _image, _center){
 			speed_mean : 8,
 			lifetime_mean : 4,
 			lifetime_std : 1,
+			genRate : 2
 		};
 	}
 
@@ -70,6 +79,7 @@ var ImageFactory = function(_ImageType, _image, _center){
 			speed_mean : 2,
 			lifetime_mean : 2,
 			lifetime_std : 1,
+			genRate : 2
 		};
 	}
 
@@ -86,6 +96,7 @@ var ImageFactory = function(_ImageType, _image, _center){
 			speed_mean : 3,
 			lifetime_mean : 2,
 			lifetime_std : 1,
+			genRate : 2
 		};
 	}
 
@@ -101,6 +112,7 @@ var ImageFactory = function(_ImageType, _image, _center){
 			speed_mean : 3,
 			lifetime_mean : 2,
 			lifetime_std : 1,
+			genRate : 2
 		};
 	}
 
@@ -116,6 +128,7 @@ var ImageFactory = function(_ImageType, _image, _center){
 			speed_mean : 3,
 			lifetime_mean : 2,
 			lifetime_std : 1,
+			genRate : 2
 		};
 	}
 
@@ -131,6 +144,7 @@ var ImageFactory = function(_ImageType, _image, _center){
 			speed_mean : 3,
 			lifetime_mean : 2,
 			lifetime_std : 1,
+			genRate : 2
 		};
 	}
 
@@ -145,6 +159,7 @@ var ImageFactory = function(_ImageType, _image, _center){
 			speed_mean : 3,
 			lifetime_mean : 2,
 			lifetime_std : 1,
+			genRate : 2
 		};
 	}
 
@@ -182,7 +197,7 @@ var ImageFactory = function(_ImageType, _image, _center){
 
 
 // Another enum ... kindda
-var ExplosionType = function (){
+var ExplosionType = (function (){
 
 	return {
 
@@ -191,21 +206,21 @@ var ExplosionType = function (){
 		enemyShipExplosion : 'ENEMY_SHIP_EXPLOSION',
 		enemyMissileExplosion : 'ENEMY_MISSILE_EXPLOSION'
 	};
-};
+}());
 
 
 
-// Uses ImageType
-var ImageSet = function(_fire, _smoke, _plasma, _debryBase, _debryShip, _debryEnemyShip, _debryMissile){
+// stores images.
+var ImageSet = function(_fire, _smoke, _plasma, _debryBase, _debryShip, _debryEnemyShip, _debryMissiles){
 
 	return {
-		ImageType.fire : _fire,
-		ImageType.smoke : _smoke,
-		ImageType.plasma : _plasma,
-		ImageType.debryBase : _debryBase,
-		ImageType.debryShip : _debryShip,
-		ImageType.debryEnemyShip : _debryEnemyShip,
-		ImageType.debryMissiles : _debryMissiles
+		fire : _fire,
+		smoke : _smoke,
+		plasma : _plasma,
+		debryBase : _debryBase,
+		debryShip : _debryShip,
+		debryEnemyShip : _debryEnemyShip,
+		debryMissiles : _debryMissiles
 	};
 };
 
@@ -217,12 +232,12 @@ var ExplosionFactory = function(_ExplosionType, _ImageSet, _graphics, _duration,
 
 		return [
 
-			ImageFactory(ImageType.fire, _ImageSet[ImageType.fire], _center),
-			ImageFactory(ImageType.smoke, _ImageSet[ImageType.smoke], _center),
-			ImageFactory(ImageType.plasma, _ImageSet[ImageType.plasma], _center),
-			ImageFactory(ImageType.debryBase, _ImageSet[ImageType.debryBase], _center)
+			ImageFactory(ImageType.fire, _ImageSet.fire, _center),
+			ImageFactory(ImageType.smoke, _ImageSet.smoke, _center),
+			ImageFactory(ImageType.plasma, _ImageSet.plasma, _center),
+			ImageFactory(ImageType.debryBase, _ImageSet.debryBase, _center)
 		];
-	}
+	}	
 
 
 
@@ -241,7 +256,7 @@ var ExplosionFactory = function(_ExplosionType, _ImageSet, _graphics, _duration,
 
 		that.pics = baseImageSet();
 		
-		that.xparam = Explosion.explosionParameters(that.pics, _graphics, _durations);
+		that.xparam = Explosion.explosionParameters(that.pics, _graphics, _duration);
 		that.exp = Explosion.setExplosion(that.xparam);
 
 
@@ -256,8 +271,8 @@ var ExplosionFactory = function(_ExplosionType, _ImageSet, _graphics, _duration,
 		that = {};
 
 		that.pics = baseImageSet();
-		that.pics.push(ImageFactory(ImageType.debryShip, _ImageSet[ImageType.debryShip], _center);
-		that.pics.push(ImageFactory(ImageType.debryMissiles, _ImageSet[ImageType.debryMissiles], _center);
+		that.pics.push(ImageFactory(ImageType.debryShip, _ImageSet[ImageType.debryShip], _center));
+		that.pics.push(ImageFactory(ImageType.debryMissiles, _ImageSet[ImageType.debryMissiles], _center));
 
 		that.xparam = Explosion.explosionParameters(that.pics, _graphics, _durations);
 		that.exp = Explosion.setExplosion(that.xparam);
@@ -273,7 +288,7 @@ var ExplosionFactory = function(_ExplosionType, _ImageSet, _graphics, _duration,
 		that = {};
 
 		that.pics = baseImageSet();
-		that.pics.push(ImageFactory(ImageType.debryMissiles, _ImageSet[ImageType.debryMissiles], _center);
+		that.pics.push(ImageFactory(ImageType.debryMissiles, _ImageSet[ImageType.debryMissiles], _center));
 
 		that.xparam = Explosion.explosionParameters(that.pics, _graphics, _durations);
 		that.exp = Explosion.setExplosion(that.xparam);
@@ -289,7 +304,7 @@ var ExplosionFactory = function(_ExplosionType, _ImageSet, _graphics, _duration,
 		that = {};
 
 		that.pics = baseImageSet();
-		that.pics.push(ImageFactory(ImageType.debryMissiles, _ImageSet[ImageType.debryMissiles], _center);
+		that.pics.push(ImageFactory(ImageType.debryMissiles, _ImageSet[ImageType.debryMissiles], _center));
 
 		that.xparam = Explosion.explosionParameters(that.pics, _graphics, _durations);
 		that.exp = Explosion.setExplosion(that.xparam);

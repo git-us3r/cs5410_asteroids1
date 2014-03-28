@@ -54,12 +54,13 @@ var Explosion = (function(){
 	that.setExplosion = function(explosionParameters){
 
 		// TODO
-		var explosion = {};	
+		var explosion = {},
+			visibility = false;
 
 
 		(function init(){
 			
-			// Member variables.	
+			// explosion.particleSystems consists of an array of objects: {system : aSystem, visible: bool}
 			explosion.particleSystems = [];
 
 			explosion.duration = explosionParameters.duration;
@@ -73,24 +74,35 @@ var Explosion = (function(){
 			// initialize the systems
 			for (var i = 0; i < explosionParameters.specs.length; i++){
 
-				// add a new system for each element of the explosion.
-				explosion.particleSystems.push(
+				// Set visibility for this system
+				if (explosionParameters.specs[i].image !== null){
 
-					particleSystem(
-						
-						explosionParameters.specs[i],
-						explosionParameters.graphics
-					)
-				);
+					// add a new system-visibility pair for each element of the explosion.
+					explosion.particleSystems.push(
+
+						// object: {particle-system, int}
+						{
+							system: particleSystem(
+							
+								explosionParameters.specs[i],
+								explosionParameters.graphics
+							),
+							genRate : explosionParameters.specs[i].genRate
+						}
+					);
+				}
 			}
 
 
 			// Prime the system.
-			explosion.particleSystems.forEach(function(system, index, array){
+			explosion.particleSystems.forEach(function(element, index, array){
 
-				for (var i = 0; i < 20; i++){
+				if ( element ){
+					
+					for (var i = 0; i < 20; i++){
 
-					system.create();
+						element.system.create();
+					}
 				}
 			});
 
@@ -112,18 +124,18 @@ var Explosion = (function(){
 
 				explosion.particleSystems.forEach(function(element, index, array){
 
-					element.update(elapsedTime);
+						element.system.update(elapsedTime);
+
+						// regenerate particles for this system,
+						// according to the generation rate genRate.
+						////
+						for(var i  = 0; i < element.genRate; i++){
+
+							element.system.create();
+						}
+
 				});
-
-				// recreate the most common particles in some relative proportion
-				// TODO
-				explosion.particleSystems[0].create();
-				explosion.particleSystems[0].create();
-				explosion.particleSystems[0].create();
-				explosion.particleSystems[1].create();
-				explosion.particleSystems[1].create();
-
-			}
+			}			
 			else if (explosion.visible){
 
 				explosion.visible  = false;
@@ -136,7 +148,7 @@ var Explosion = (function(){
 
 			explosion.particleSystems.forEach(function(element, index, array){
 
-				element.render(explosion.graphics);
+					element.system.render(explosion.graphics);
 			});
 		};
 
