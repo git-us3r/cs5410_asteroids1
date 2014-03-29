@@ -30,7 +30,7 @@ EXPD.EXPDLoop = function(time){
 	// EXPD.keyboard.update(EXPD.elapsedTime / 1000);
 	// EXPD.updateShip(EXPD.elapsedTime / 1000, {x: EXPD.canvas.width, y: EXPD.canvas.height}); // elapsedTime is now in seconds.
 
-	EXPD.clear();
+	EXPD.graphics.clear();
 	EXPD.render(EXPD.context);
 
 	requestAnimationFrame(EXPD.EXPDLoop);
@@ -44,15 +44,15 @@ EXPD.initialize = function(){
 	EXPD.canvas = document.getElementById('canvas');
 	EXPD.context = EXPD.canvas.getContext('2d');
 	
-	EXPD.clear = function(){
+	function _clear(){
 	
 		EXPD.context.save();
 		EXPD.context.setTransform(1, 0, 0, 1, 0, 0);
 		EXPD.context.clearRect(0, 0, canvas.width, canvas.height);
 		EXPD.context.restore();
-	};
+	}
 
-	EXPD.draw = function(spec) {
+	function _drawImage(spec) {
 		
 		EXPD.context.save();
 		
@@ -67,13 +67,13 @@ EXPD.initialize = function(){
 			spec.width, spec.height);
 		
 		EXPD.context.restore();
-	};
+	}
 
 
 	EXPD.graphics = {
 
-		clear : EXPD.clear,
-		drawImage : EXPD.draw
+		clear : _clear,
+		drawImage : _drawImage
 
 	};
 
@@ -83,23 +83,30 @@ EXPD.initialize = function(){
 	EXPD.velements['keyboard'] = kb;
 
 
-	// A single asteroid for now .. it is just to test the motion... then the vectors must be implemented nicely.
-	var ship = Ship();
-	ship.image = EXPD.images['images/ship.jpg'];
-	ship.width = 50;
-	ship.height = 50;
-	ship.rotation = 0;
-	ship.center = {x: 100, y: 100};
-	
-	ship.visible = true;
-	ship.renderable = true;
-	ship.name = 'ship';						// new id for collision detection and strategy
 
-	EXPD.velements['ship'] = [ship];		// an array of one to maintain a consistent interface. (see CollisionDetector)
+	// var Ship = function( _image, _width, _height, _center, _rotation, _visible, _maxThrustRate, _rotationRate,)
+	
+	(function initializeShip(){
+
+		var image = EXPD.images['images/ship.jpg'],
+		width = 50,
+		height = 50,
+		center = {x: 100, y: 100},
+		rotation = 0,
+		visible = true,
+		maxThrustRate = 10,
+		rotationRate = 4,
+		ship = Ship(image, width, height, center, rotation, visible, maxThrustRate, rotationRate);
+		
+
+		EXPD.velements['ship'] = [ship];		// an array of one to maintain a consistent interface. (see CollisionDetector)
+	}());
+
+
 
 
 	// Only 10 for now ... args can be used to changed that.
-	EXPD.initializeAsteroids = (function(arg){
+	(function initializeAsteroids(arg){
 
 		EXPD.velements['asteroids'] = [];
 
@@ -191,6 +198,7 @@ EXPD.initialize = function(){
 		EXPD.velements['keyboard'].update(elapsedTime, canvasDim);
 		EXPD.velements['ship'][0].update(elapsedTime, canvasDim);		// mmhh .. the pits of patching
 		
+		/*
 		for(var i = 0; i < EXPD.velements['asteroids'].length; i++){
 
 			if ( EXPD.velements['asteroids'][i].visible) {
@@ -210,13 +218,14 @@ EXPD.initialize = function(){
 				EXPD.velements['explosions'][i].update(elapsedTime, canvasDim);				
 			}
 		}
+		*/
 
 	};
 
 
 	EXPD.render = function(ctx){
 
-		EXPD.velements['ship'][0].render(ctx);			// hack hack!
+		EXPD.graphics.drawImage(EXPD.velements['ship'][0]);
 
 		for(var i = 0; i < EXPD.velements['asteroids'].length; i++){
 
