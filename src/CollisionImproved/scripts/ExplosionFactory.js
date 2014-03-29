@@ -251,6 +251,7 @@ var ExplosionFactory = function(_ExplosionType, _ImageSet, _graphics, _duration,
 	///
 	function BE()
 	{
+		/// FIX THIS TO USE var.
 		// get the basic elements
 		that = {};
 

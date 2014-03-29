@@ -10,7 +10,8 @@
 var Explosion = (function(){
 	
 	var that = {},
-		systemGen = {};
+		systemGen = {},
+		uniqueId = 0;
 
 
 	// Client Interface: spec.center represents the center of the explosion to be used.
@@ -51,7 +52,7 @@ var Explosion = (function(){
 
 
 	// Client Interface: depends on that.explosionParamters and particle-system.js
-	that.setExplosion = function(explosionParameters){
+	function setExplosion(explosionParameters){
 
 		// TODO
 		var explosion = {},
@@ -68,6 +69,9 @@ var Explosion = (function(){
 
 			explosion.lifetime = 0;
 			explosion.visible = true;
+
+			explosion.id = uniqueId;
+			uniqueId++;
 
 
 
@@ -109,7 +113,6 @@ var Explosion = (function(){
 
 
 		}());
-
 
 		// Wrap the update function to work with several systems
 		// particle-system does not recreate dead particles
@@ -155,6 +158,7 @@ var Explosion = (function(){
 
 		return explosion;
 	};
+	that.setExplosion = setExplosion;
 
 	return that;
 }());

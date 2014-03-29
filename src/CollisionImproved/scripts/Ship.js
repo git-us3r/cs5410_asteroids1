@@ -120,45 +120,37 @@ var Ship = function( _image, _width, _height, _center, _rotation, _visible, _max
 
 
 
-		// check for bounds
-		if(that.center.x > (canvasDim.x + that.width)) {
+		(function wrapAroundCanvas(){
+
+			// Horizontal Wrap
+			if(that.center.x > (canvasDim.x + that.width)) {
 
 			that.center.x = 0;
 
-		}
-		else if(that.center.x < (-that.width)) {
+			}
+			else if(that.center.x < (-that.width)) {
 
-			that.center.x = canvasDim.x;
+				that.center.x = canvasDim.x;
 
-		}
+			}
 
 
-		if(that.center.y > (canvasDim.y + that.height)) {
+			// Vertical Wrap
+			if(that.center.y > (canvasDim.y + that.height)) {
 
-			that.center.y = 0;
+				that.center.y = 0;
 
-		}
-		else if(that.center.y < (-that.width)) {
+			}
+			else if(that.center.y < (-that.width)) {
 
-			that.center.y = canvasDim.y;
+				that.center.y = canvasDim.y;
 
-		}
+			}
+
+		}());
 
 		// Now, the iniertia vector points in the direction of current motion.
 		inertiaVector = accelerationVector;
-
-		/*
-		if (Vector2d.magnitude(inertiaVector) > maxAcceleration){
-
-			inertiaVector = Vector2d.scale(maxAcceleration, inertiaVector);
-		}
-		else if (Vector2d.magnitude(inertiaVector) < minAcceleration){
-
-			inertiaVector = Vector2d.scale(minAcceleration, inertiaVector);	
-		}
-
-		// around here is where the friction could be implemented ... later: this is forbidden for now.
-		*/
 	}
 
 	////
