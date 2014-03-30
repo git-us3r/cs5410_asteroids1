@@ -151,6 +151,7 @@ EXPD.initialize = function(){
 		EXPD.keyboard.registerKey(KeyEvent.DOM_VK_E, EXPD.ship[0].thrustAction);
 		EXPD.keyboard.registerKey(KeyEvent.DOM_VK_S, EXPD.ship[0].rotateLeft);
 		EXPD.keyboard.registerKey(KeyEvent.DOM_VK_F, EXPD.ship[0].rotateRight);
+		EXPD.keyboard.registerKey(KeyEvent.DOM_VK_SPACE, EXPD.initializeFriendlyMissile);
 	}());
 
 
@@ -197,7 +198,7 @@ EXPD.initializeExplosion = function(args){
 
 
 
-EXPD.initializeMissile = function(args){
+EXPD.initializeFriendlyMissile = function(args){
 
 	var image = EXPD.images['images/plasma.jpg'],
 		width = 10,
@@ -207,7 +208,7 @@ EXPD.initializeMissile = function(args){
 		// TODO: fix.
 		center = EXPD.ship[0].center,
 		rotation = 0,
-		speed = 60,
+		speed = 160,
 		direction = EXPD.ship[0].direction,
 		visible = true;
 
@@ -224,7 +225,7 @@ EXPD.initializeMissile = function(args){
 		missile.rotation += missile.rotateRate;
 		missile.center = Vector2d.add(missile.center, Vector2d.scale((elapsedTime * missile.speed), missile.direction));
 		
-		if(missile.IsOutOfBounds()){
+		if(missile.IsOutOfBounds(canvasDim)){
 
 			missile.visible = false;
 		}
@@ -371,6 +372,16 @@ EXPD.render = function(ctx){
 
 		EXPD.graphics.drawImage(EXPD.asteroids[ast]);
 	}
+
+
+
+	// render friendly missiles
+	for(var mis in EXPD.friendlyMissles){
+
+		EXPD.graphics.drawImage(EXPD.friendlyMissles[mis]);
+	}
+
+
 
 	// render explosions
 	for(var exp in EXPD.explosions){

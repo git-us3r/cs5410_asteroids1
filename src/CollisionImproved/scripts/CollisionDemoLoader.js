@@ -29,6 +29,7 @@ window.addEventListener('load', function() {
 				'preload!images/ship.jpg',
 				'preload!images/asteroid1.jpg',
 				'preload!images/fire.png',
+				'preload!images/plasma.jpg',
 				'preload!images/smoke.png',
 				'preload!scripts/particle-system-exp.js',
 				'preload!scripts/Explosion.js',
