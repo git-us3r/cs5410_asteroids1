@@ -8,10 +8,11 @@ var Ship = function( _image, _width, _height, _center, _rotation, _visible, _max
 		thrustVector = {x: 0, y: 0},
 		accelerationVector = {x: 0, y: 0},
 		thrustRate = 0,
-		motionMagnitude = 0,
+		speed = 0,
 		maxAcceleration = 350,
 		minAcceleration = 1.6;
 
+	that.direction = directionVector;
 	that.visible = _visible;						// false isn't true	
 	that.rotationRate = _rotationRate;	
 	that.maxThrustRate = _maxThrustRate;
@@ -32,8 +33,6 @@ var Ship = function( _image, _width, _height, _center, _rotation, _visible, _max
 
 	function setDirectionVector(){			// Unit vector
 
-		// that.directionVector.x = Math.cos(that.rotate());
-		//that.directionVector.y = Math.sin(that.rotate());
 		directionVector = Vector2d.vectorFromAngle(truRotation());
 
 	}
@@ -42,16 +41,6 @@ var Ship = function( _image, _width, _height, _center, _rotation, _visible, _max
 	
 
 	function setThrustVector(){
-
-		/*
-		that.thrustVector.x = Math.abs(that.thrustRate) * that.directionVector.x;
-		that.thrustVector.y = Math.abs(that.thrustRate) * that.directionVector.y;
-
-		if(that.thrustVector.x < 0 || that.thrustVector.y < 0){
-
-			console.log(that.thrustVector.x + ", " + that.thrustVector.y);
-		}
-		*/
 
 		thrustVector = Vector2d.scale( Math.abs(thrustRate), directionVector);
 
@@ -63,13 +52,9 @@ var Ship = function( _image, _width, _height, _center, _rotation, _visible, _max
 
 	function setAccelerationVector(){
 
-		// accelerationVector = inertiaVector + thrustVector
-
-		// that.accelerationVector.x = that.inertiaVector.x + that.thrustVector.x;
-		// that.accelerationVector.y = that.inertiaVector.y + that.thrustVector.y;
 		accelerationVector = Vector2d.add(inertiaVector, thrustVector);
-
 		
+		// Cap acceleration to smooth game play (not too fast please)
 		if (Vector2d.magnitude(accelerationVector) > maxAcceleration){
 
 			accelerationVector = Vector2d.scale(maxAcceleration, Vector2d.getDirection(accelerationVector));
@@ -82,44 +67,19 @@ var Ship = function( _image, _width, _height, _center, _rotation, _visible, _max
 
 	function move(timeElapsed, canvasDim){
 
-		//var dx = timeElapsed * that.accelerationVector.x,
-		//	dy = timeElapsed * that.accelerationVector.y;
-
-
 
 		// change in velocity ... fix
-		var changeInMotion = Vector2d.scale(timeElapsed, accelerationVector);
+		var velocity = Vector2d.scale(timeElapsed, accelerationVector);
 
-		//that.motionMagnitude = Math.sqrt(Math.pow(dx,2 ) + Math.pow(dy, 2));
-		motionMagnitude = Vector2d.magnitude(changeInMotion);
+		//that.speed = Math.sqrt(Math.pow(dx,2 ) + Math.pow(dy, 2));
+		speed = Vector2d.magnitude(velocity);
 
-
-
-		/*
-		if(dx !== 0 ) {
 		
-			that.center.x += dx;
-			that.inMotion = true;
-
-		}
-
-		if(dy !== 0){
-
-			that.center.y += dy;
-			that.inMotion = true;
-		}
-
-		if(dx === 0 && dy === 0){
-
-			that.inMotion = false;
-		}
-		*/
-		
-		that.center = Vector2d.add(that.center, changeInMotion);
+		// move
+		that.center = Vector2d.add(that.center, velocity);
 
 
-
-
+		// Wrapping
 		(function wrapAroundCanvas(){
 
 			// Horizontal Wrap
@@ -149,9 +109,12 @@ var Ship = function( _image, _width, _height, _center, _rotation, _visible, _max
 
 		}());
 
+
 		// Now, the iniertia vector points in the direction of current motion.
 		inertiaVector = accelerationVector;
 	}
+
+
 
 	////
 	// Input functions: bind with keyboard object.
@@ -160,9 +123,6 @@ var Ship = function( _image, _width, _height, _center, _rotation, _visible, _max
 	that.rotateRight = function(elapsedTime, code) {
 			
 			that.rotation += that.rotationRate * elapsedTime;
-			//console.log(that.rotation + ", " + that.rotation * 180 / Math.PI);
-
-			//console.log(that.rotation + ", " + Math.cos((Math.abs(that.rotation) % 360) * (Math.PI/180)));
 	};
 
 
@@ -171,7 +131,6 @@ var Ship = function( _image, _width, _height, _center, _rotation, _visible, _max
 	that.rotateLeft = function (elapsedTime, code) {
 
 			that.rotation -= that.rotationRate * elapsedTime;
-			//console.log(that.rotation + ", " + that.rotation * 180 / Math.PI);
 
 	};
 
@@ -203,6 +162,7 @@ var Ship = function( _image, _width, _height, _center, _rotation, _visible, _max
 		setThrustVector();
 		setAccelerationVector();
 		move(elapsedTime, canvasDim);
+		that.direction = directionVector;
 	}
 	that.update = update;
 

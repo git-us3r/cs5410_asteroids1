@@ -6,9 +6,8 @@
 // That is, the elements in one array collide
 // with the elements in the other array.
 //
-// Interface: elements expose datamembers:
-// width <of type number>, height <of type number>, and center <of type {x <of type number>, y <of type number>}.
-// a function (parameter action) is expected to handle the collision.
+// Interface: ntt1 and ntt2 are array-like objects. So, they are objects with at least
+// one property, which represents a visual element; e.g., ship, asteroid, etc.
 ////////
 var CollisionDetector = (function(){
 	
@@ -37,14 +36,15 @@ var CollisionDetector = (function(){
 	//////
 	that.detectCollisions = function(ntts1, ntts2, action){
 
-		for ( var i = 0; i < ntts1.length; i++ ) {
+		for(var ntt1 in ntts1){
 
-			for ( var j = 0; j < ntts2.length; j++){
+			for(var ntt2 in ntts2){
 
-				if(doCollide(ntts1[i], ntts2[j])){
+				if(doCollide(ntts1[ntt1], ntts2[ntt2])){
 
-					action(ntts1[i], ntts2[j]);
+					action(ntts1[ntt1], ntts2[ntt2]);
 				}
+
 			}
 		}
 	};

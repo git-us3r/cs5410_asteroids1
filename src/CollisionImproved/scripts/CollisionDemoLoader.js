@@ -22,6 +22,7 @@ window.addEventListener('load', function() {
 				'preload!scripts/Vector2d.js',
 				'preload!scripts/random.js',
 				'preload!scripts/Spec.js',
+				'preload!scripts/Inert.js',
 				'preload!scripts/Ship.js',
 				'preload!scripts/Asteroid.js',
 				'preload!scripts/keyboard.js',
@@ -30,9 +31,9 @@ window.addEventListener('load', function() {
 				'preload!images/fire.png',
 				'preload!images/smoke.png',
 				'preload!scripts/particle-system-exp.js',
-				'preload!scripts/CollisionDetector.js',
 				'preload!scripts/Explosion.js',
 				'preload!scripts/ExplosionFactory.js',
+				'preload!scripts/CollisionDetector.js',
 				'preload!scripts/CollisionDemo.js'
 			],
 			complete : function() {

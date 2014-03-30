@@ -1,22 +1,16 @@
 // The EXPD variable exists since loader was executed.
 
+EXPD.Entities = {
 
-/*
+	SHIP_FRIENDLY : 'SHIP',
+	ASTEROID_LRG : 'ASTEROID_LRG',
+	ASTEROID_MED : 'ASTEROID_MED',
+	ASTEROID_SML : 'ASTEROID_SML',
+	MISSLE_FRIENDLY : 'MISSLE_FRIENDLY',
+	MISSLE_ENEMY : 'MISSLE_ENEMY',
+	SHIP_ENEMY : 'SHIP_ENEMY'
+};
 
-	Implementation update:
-
-	Iimplement a Factory pattern for the visual elements.
-	Furhter, set the factory to add a unique integer for each
-	visual element produced (ship, asteroids, etc.)
-
-	The unique integer is used as key for the velements object.
-	In particular, the velements elements will not longer be arrays but
-	object literals - with key/value : intId/object.
-
-	This allows the removal (or migration) of invisible elements
-	from the game detection and collision managers.
-
-*/
 
 
 
@@ -38,9 +32,10 @@ EXPD.EXPDLoop = function(time){
 };
 
 
+
 EXPD.initialize = function(){
 
-	EXPD.velements = {};
+	//EXPD.velements = {};
 	EXPD.canvas = document.getElementById('canvas');
 	EXPD.context = EXPD.canvas.getContext('2d');
 	
@@ -89,7 +84,6 @@ EXPD.initialize = function(){
 	(function initializeKeyboard(){
 
 		var kb = Keyboard(KeyEvent.DOM_VK_E);
-		kb.renderable = false;
 		EXPD.keyboard = kb;
 
 	}());
@@ -98,6 +92,8 @@ EXPD.initialize = function(){
 
 	// var Ship = function( _image, _width, _height, _center, _rotation, _visible, _maxThrustRate, _rotationRate,)	
 	(function initializeShip(){
+
+		EXPD.ship = {};
 
 		var image = EXPD.images['images/ship.jpg'],
 		width = 50,
@@ -110,8 +106,8 @@ EXPD.initialize = function(){
 		ship = Ship(image, width, height, center, rotation, visible, maxThrustRate, rotationRate);
 		
 
-		EXPD.velements[ship.id] = ship;
-		EXPD.shipID = ship.id;				// hack
+		ship.type = EXPD.Entities.SHIP_FRIENDLY;
+		EXPD.ship[0] = ship;
 	}());
 
 
@@ -120,12 +116,17 @@ EXPD.initialize = function(){
 	// Only 4 for now ... args can be used to changed that.
 	(function initializeAsteroids(numberOfAsteroids){
 
+		EXPD.asteroids = {};
+
 		for (var i = 0; i < numberOfAsteroids; i++){
 
 			//Asteroid(_image, _width, _height, _center, _rotation)
 			var image = EXPD.images['images/asteroid1.jpg'],
 				width = 50,
 				height = 50,
+				//
+				// Random is bad: what if there is a collision at time t = 0?
+				// TODO: fix.
 				center = {
 					x: Random.nextRange(width, EXPD.canvas.width - width), 
 					y: Random.nextRange(height, EXPD.canvas.height - height)
@@ -135,10 +136,11 @@ EXPD.initialize = function(){
 				direction = Vector2d.vectorFromAngle(Random.nextGaussian(Math.PI, Math.PI)),
 				visible = true;
 
-			var	ast = Asteroid(image, width, height, center, rotation, speed, direction, visible);
+			var	ast = Inert.create(image, width, height, center, rotation, speed, direction, visible);
+			ast.type = EXPD.Entities.ASTEROID_MED;
 				
 
-			EXPD.velements[ast.id] = ast;
+			EXPD.asteroids[ast.id] = ast;
 		}
 	}(4));
 
@@ -146,11 +148,17 @@ EXPD.initialize = function(){
 	(function initializeKeyboard(){
 
 		// There needs to be a function to do this with client requests.
-		EXPD.keyboard.registerKey(KeyEvent.DOM_VK_E, EXPD.velements[EXPD.shipID].thrustAction);
-		EXPD.keyboard.registerKey(KeyEvent.DOM_VK_S, EXPD.velements[EXPD.shipID].rotateLeft);
-		EXPD.keyboard.registerKey(KeyEvent.DOM_VK_F, EXPD.velements[EXPD.shipID].rotateRight);
+		EXPD.keyboard.registerKey(KeyEvent.DOM_VK_E, EXPD.ship[0].thrustAction);
+		EXPD.keyboard.registerKey(KeyEvent.DOM_VK_S, EXPD.ship[0].rotateLeft);
+		EXPD.keyboard.registerKey(KeyEvent.DOM_VK_F, EXPD.ship[0].rotateRight);
 	}());
 
+
+	// set up explosions object
+	EXPD.explosions = {};
+
+	// set up friendly missles object
+	EXPD.friendlyMissles = {};
 
 
 	// READY?, SET?, GO!
@@ -164,10 +172,10 @@ EXPD.initialize = function(){
 
 
 
-EXPD.initializeExplosion = function(arg){
+EXPD.initializeExplosion = function(args){
 
 	// say, base
-	var imgs = ImageSet(
+	var imgs = ExplosionFactory.ImageSet(
 
 		EXPD.images['images/fire.png'],
 		EXPD.images['images/smoke.png'],
@@ -176,12 +184,10 @@ EXPD.initializeExplosion = function(arg){
 		null,
 		null,
 		null
-	)
+	);
 
-	// Initialize the explosion and push to velement.
-	// function(_ExplosionType, _ImageSet, _graphics, _duration, _center)
-	var exp = ExplosionFactory(ExplosionType.baseExplosion, imgs, EXPD.graphics, 4, arg);
-	//EXPD.velements['explosions'].push(exp);
+	// Initialize explosion, tag, and bag.
+	var exp = ExplosionFactory.create(ExplosionFactory.ExplosionType.baseExplosion, imgs, EXPD.graphics, 4, args.midpoint);
 	EXPD.explosions[exp.id] = exp;
 
 	/// TODO : other explosions ... also, this one is pretty crappy.
@@ -191,9 +197,52 @@ EXPD.initializeExplosion = function(arg){
 
 
 
+EXPD.initializeMissile = function(args){
+
+	var image = EXPD.images['images/plasma.jpg'],
+		width = 10,
+		height = 10,
+		//
+		// Random is bad: what if there is a collision at time t = 0?
+		// TODO: fix.
+		center = EXPD.ship[0].center,
+		rotation = 0,
+		speed = 60,
+		direction = EXPD.ship[0].direction,
+		visible = true;
+
+	var	missile = Inert.create(image, width, height, center, rotation, speed, direction, visible);
+	missile.type = EXPD.Entities.MISSLE_FRIENDLY;
+
+
+	// Override the update function
+	(function override_update(){
+
+		missile.update = function update(elapsedTime, canvasDim){
+
+		// Hardcoded works fine for now
+		missile.rotation += missile.rotateRate;
+		missile.center = Vector2d.add(missile.center, Vector2d.scale((elapsedTime * missile.speed), missile.direction));
+		
+		if(missile.IsOutOfBounds()){
+
+			missile.visible = false;
+		}
+
+	}}());
+				
+
+	// Insert.
+	EXPD.friendlyMissles[missile.id] = missile;
+};
+
+
+
+
+
 EXPD.collisionDetection = function(){
 
-	// Collision handling function
+	// Collision handling function : dumb
 	function collisionStrategy_log(ntt1, ntt2){
 
 		var mp = Vector2d.midPoint(ntt1.center, ntt2.center);
@@ -201,121 +250,132 @@ EXPD.collisionDetection = function(){
 	}
 
 
-	// kill the asteroid ... temporarily, of course. ... with an exp
+
+
+	// kill the asteroid ... temporarily, of course. ... with an exp .. testing
 	function collisionStrategy_exp(ntt1, ntt2){
 
-		if(ntt1.name === 'ast'){
-
+		if(ntt1.type === 'asteroid_medium'){
 			ntt1.visible = false;
 		}
 		else{
-
 			ntt2.visible = false;
 		}
 
-		EXPD.initializeExplosion(Vector2d.midPoint(ntt1.center, ntt2.center));
 
+		// If the ntts are here, (1) they collide, (2) they are visible.
+		EXPD.initializeExplosion({midpoint : Vector2d.midPoint(ntt1.center, ntt2.center)});
 
 	}
 
-	CollisionDetector.detectCollisions(EXPD.velements['ship'], EXPD.velements['asteroids'], collisionStrategy_exp);
+
+	function collisionStrategy_exp2()
+	{
+		// test simultaneous exps
+		EXPD.initializeExplosion({midpoint : {x: 100, y:100}});
+		EXPD.initializeExplosion({midpoint : {x: 200, y:200}});
+		EXPD.initializeExplosion({midpoint : {x: 300, y:300}});
+		EXPD.initializeExplosion({midpoint : {x: 400, y:400}});
+	}
+
+
+
+	// CollisionDetector.js
+	CollisionDetector.detectCollisions(EXPD.ship, EXPD.asteroids, collisionStrategy_exp);
+	CollisionDetector.detectCollisions(EXPD.friendlyMissles, EXPD.asteroids, collisionStrategy_exp);
+
 };
 
 
 
 EXPD.update = function(elapsedTime, canvasDim){
 
-	//EXPD.velements['keyboard'].update(elapsedTime, canvasDim);
 	EXPD.keyboard.update(elapsedTime, canvasDim);
-	//EXPD.velements['ship'][0].update(elapsedTime, canvasDim);		// mmhh .. the pits of patching
-	//EXPD.velements['ship'][0].update(elapsedTime, canvasDim);		// mmhh .. the pits of patching
+	EXPD.ship[0].update(elapsedTime, canvasDim);
 
-	for(var velement in EXPD.velements){
 
-		EXPD.velements[velement].update(elapsedTime, canvasDim);
+	// Update elements before collision detection.
+	// NOTE: to move out of here, add parameters, and done.
+	/////
+	(function preCollisionUpdate(){
 
-		if(!EXPD.velements[velement].visible){
+		// update asteroids
+		for(var ast in EXPD.asteroids){
 
-			delete EXPD.velements[velement];
+			EXPD.asteroids[ast].update(elapsedTime, canvasDim);
+
 		}
-	}
 
-	
-	/*
-	for(var i = 0; i < EXPD.velements['asteroids'].length; i++){
+		// update friendly missiles
+		for(var msl in EXPD.friendlyMissles){
 
-		if ( EXPD.velements['asteroids'][i].visible) {
-
-			EXPD.velements['asteroids'][i].update(elapsedTime, canvasDim);				
+			EXPD.friendlyMissles[msl].update(elapsedTime, canvasDim);
 		}
-	}
 
-	EXPD.collisionDetection();		// Modifies the state of elements.
+	}());
 
-	// Here because they could be set inside collisionDetection
-	for(var i = 0; i < EXPD.velements['explosions'].length; i++){
 
-		// an explosion should have a visible property (which is true as long as at least one of the particles is visible).
-		if ( EXPD.velements['explosions'][i].visible) {
 
-			EXPD.velements['explosions'][i].update(elapsedTime, canvasDim);				
+	// detect collisions. NOTE: Modifies the state of elements.
+	EXPD.collisionDetection();
+
+
+
+	// Update elements (including explposions) after collision detection.
+	/////
+	(function postCollisionUpdate(){
+
+		// Delete destroyed asteroids.
+		for(var ast in EXPD.asteroids){
+
+			if(!EXPD.asteroids[ast].visible){
+
+					delete EXPD.asteroids[ast];
+			}
 		}
-	}
-	*/
+
+
+
+		// Delete destroyed missiles
+		for(var msl in EXPD.friendlyMissles){
+
+			if(!EXPD.friendlyMissles[msl].visible){
+
+					delete EXPD.friendlyMissles[msl];
+			}
+		}	
+
+
+		// update explosions.
+		for(var exp in EXPD.explosions){
+
+			EXPD.explosions[exp].update(elapsedTime, canvasDim);
+
+			if(!EXPD.explosions[exp].visible){
+
+				delete EXPD.explosions[exp];
+			}
+		}
+	}());
 
 };
 
 
 EXPD.render = function(ctx){
 
-	/*
+	// render ship
+	EXPD.graphics.drawImage(EXPD.ship[0]);
 
-		EXPD.graphics.drawImage(EXPD.velements[EXPD.shipID]);
+	// render asteroids
+	for(var ast in EXPD.asteroids){
 
-		for(var i = 0; i < EXPD.velements['asteroids'].length; i++){
-
-		if ( EXPD.velements['asteroids'][i].visible) {
-
-			EXPD.graphics.drawImage(EXPD.velements['asteroids'][i]);
-		}
+		EXPD.graphics.drawImage(EXPD.asteroids[ast]);
 	}
 
-	*/
+	// render explosions
+	for(var exp in EXPD.explosions){
 
-	(function renderVelements(){
-
-		for(var velement in EXPD.velements){
-
-			EXPD.graphics.drawImage(EXPD.velements[velement]);
-		}
-
-	}());
-
-
-
-	// Explosions are special
-	(function renderExplosions(){
-
-		/*
-
-			for(var i = 0; i < EXPD.velements['explosions'].length; i++){
-
-			if ( EXPD.explosions[i].visible) {
-
-				EXPD.velements['explosions'][i].render();				
-			}
-			}
-
-		*/
-
-
-		for(var exp in EXPD.explosions){
-
-			exp.render();
-		}
-
-	}());
-
-	
+			EXPD.explosions[exp].render();
+	}	
 
 };
